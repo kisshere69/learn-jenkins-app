@@ -3,7 +3,7 @@ pipeline {
 
     environment{
         NETLIFY_SITE_ID = '8f06a4a7-82bf-4001-907f-ba20d9e55e10'
-        JENKINS_AUTH_TOKEN = credentials ('netlify-token')
+        NETLIFY_AUTH_TOKEN = credentials ('netlify-token')
     }
 
     stages {
@@ -64,8 +64,11 @@ pipeline {
                     sh'''
                         npm install netlify-cli@20.1.1
                         node_modules/.bin/netlify --version
+
                         echo "Deploying to PROD. Site: $NETLIFY_SITE_ID"
+
                         node_modules/.bin/netlify status
+                        node_modules/.bin/netlify deploy --dir=build --prod
                     '''
                 }
             }
