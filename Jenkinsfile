@@ -23,7 +23,49 @@ pipeline {
             }
         }
 
-        stage('Test'){
+        stage('Parallel Tests'){
+            parallel{
+                stage('Unit Test'){
+                    agent{
+                        docker{
+                            image 'node:18-alpine'
+                            reuseNode true
+                        }
+                    }
+
+                    steps{
+                        sh'''
+                        echo "Test stage"
+                        test -f build/index.html
+
+                        echo "Testing npm"
+                        npm test
+                        '''
+                    }
+                }
+
+                stage('End-to-End Test'){
+                    agent{
+                        docker{
+                            image 'mcr.microsoft.com/playwright:v1.61.0-noble'
+                            reuseNode true
+                        }
+                    }
+
+                    steps{
+                        sh'''
+                            echo "Test stage"
+
+                            npm install -g serve
+                            serve -s build
+                            npx playwright test
+                        '''
+                    }
+                }               
+            }
+        }
+
+        stage('Deploy'){
             agent{
                 docker{
                     image 'node:18-alpine'
@@ -33,34 +75,12 @@ pipeline {
 
             steps{
                 sh'''
-                    echo "Test stage"
-                    test -f build/index.html
-
-                    echo "Testing npm"
-                    npm test
+                npm install -g netlify-cli
+                netlify --version
                 '''
             }
         }
 
-        stage('End-to-End Test'){
-            agent{
-                docker{
-                    image 'mcr.microsoft.com/playwright:v1.61.0-noble'
-                    reuseNode true
-                }
-            }
-
-            steps{
-                sh'''
-                    echo "Test stage"
-
-                    npm install -g serve
-                    serve -s build
-                    npx playwright test
-                    
-                '''
-            }
-        }
     }
 
     post{
