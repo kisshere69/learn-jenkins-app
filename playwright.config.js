@@ -63,10 +63,12 @@ module.exports = defineConfig({
   ],
 
   /* Run your local dev server before starting the tests */
-  // webServer: {
-  //   command: 'npm run start',
-  //   url: 'http://127.0.0.1:3000',
-  //   reuseExistingServer: !process.env.CI,
-  // },
+  webServer: {
+    // Start the app before running the tests. Change the command if your project uses a different script.
+    command: 'npm run start',
+    url: process.env.CI_ENVIRONMENT_URL || 'http://127.0.0.1:3000',
+    // Reuse an existing server when not running in CI to speed up local runs.
+    reuseExistingServer: !process.env.CI,
+  },
 });
 
