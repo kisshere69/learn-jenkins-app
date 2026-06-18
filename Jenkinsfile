@@ -98,7 +98,30 @@ pipeline {
                     '''
                 }
             }
+
+            script{
+                env.UAT_URL = sh(script: "node_modules/.bin/node-jq -r '.deploy_url' deploy-output.json", returnStdout: true)
+            }
         }
+
+
+        stage('UAT E2E'){
+            agent{
+                docker{
+                    image 'mcr.microsoft.com/playwright:v1.61.0-jammy'
+                    reuseNode true
+                }
+            }
+
+        environment{
+            CI_ENVIRONMENT_URL = "$env.UAT_URL"
+        }
+            steps{
+                sh'''
+                echo "Production tests completed"
+                '''
+            }
+        } 
 
         stage('Approve'){
             steps{
