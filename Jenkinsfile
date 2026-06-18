@@ -83,7 +83,7 @@ pipeline {
 
             steps{
                 sh'''
-                npm install netlify-cli@20.1.1 node-jq
+                npm install netlify-cli@24.0.1 node-jq
                 node_modules/.bin/netlify --version
 
                 echo "Checking if we are logged in..."
@@ -92,7 +92,6 @@ pipeline {
                 echo "Deploying to UAT and writing the output into JSON. Site: $NETLIFY_SITE_ID"
                 node_modules/.bin/netlify deploy --dir=build --json > deploy-output.json
 
-                npm audit fix --force
 
                 echo "Reading URL from deploy-output.json"                
                 node_modules/.bin/node-jq -r '.deploy_url' deploy-output.json
