@@ -28,12 +28,10 @@ pipeline {
             steps {
                 sh '''
                     echo "Listing files..." 
-                    ls -la
                     node --version
                     npm --version
                     npm ci
                     npm run build
-                    ls -la
                 '''
             }
         }
@@ -65,7 +63,7 @@ pipeline {
                 stage('End-to-End Test'){
                     agent{
                         docker{
-                            image 'mcr.microsoft.com/playwright:v1.61.0-jammy'
+                            image 'my-playwright'
                             reuseNode true
                         }
                     }
@@ -82,24 +80,19 @@ pipeline {
         stage('Deploy and test in UAT'){
             agent{
                 docker{
-                    image 'mcr.microsoft.com/playwright:v1.61.0-jammy'
+                    image 'my-playwright'
                     reuseNode true
                 }
             }
 
             steps{
                 sh'''
-                npm install netlify-cli@20.1.1 node-jq
-                node_modules/.bin/netlify --version
-
-                echo "Checking if we are logged in..."
-                node_modules/.bin/netlify status
 
                 echo "Deploying to UAT and writing the output into JSON. Site: $NETLIFY_SITE_ID"
-                node_modules/.bin/netlify deploy --dir=build --json > deploy-output.json
+                netlify deploy --dir=build --json > deploy-output.json
 
                 echo "Reading URL from deploy-output.json"                
-                node_modules/.bin/node-jq -r '.deploy_url' deploy-output.json
+                node-jq -r '.deploy_url' deploy-output.json
 
                 echo "UAT tests completed"
 
@@ -120,7 +113,7 @@ pipeline {
         stage('Deploy and test in PROD'){
             agent{
                 docker{
-                    image 'mcr.microsoft.com/playwright:v1.61.0-jammy'
+                    image 'my-playwright'
                     reuseNode true
                 }
             }
@@ -131,7 +124,7 @@ pipeline {
             steps{
                 sh'''
                 echo "Deploying to production. Site: $NETLIFY_SITE_ID"
-                node_modules/.bin/netlify deploy --dir=build --prod --json
+                netlify deploy --dir=build --prod --json
 
                 npx playwright test
                 echo "PROD tests completed"
