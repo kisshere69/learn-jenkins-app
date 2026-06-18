@@ -80,7 +80,7 @@ pipeline {
 
             steps{
                 sh'''
-                npm install netlify-cli@24.0.1 node-jq
+                npm install netlify-cli@20.1.1 node-jq
                 node_modules/.bin/netlify --version
 
                 echo "Checking if we are logged in..."
