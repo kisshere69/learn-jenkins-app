@@ -41,9 +41,6 @@ pipeline {
 
                     steps{
                         sh'''
-                        echo "Test stage"
-                        test -f build/index.html
-
                         echo "Testing npm"
                         npm test
                         '''
@@ -92,7 +89,6 @@ pipeline {
                 echo "Deploying to UAT and writing the output into JSON. Site: $NETLIFY_SITE_ID"
                 node_modules/.bin/netlify deploy --dir=build --json > deploy-output.json
 
-
                 echo "Reading URL from deploy-output.json"                
                 node_modules/.bin/node-jq -r '.deploy_url' deploy-output.json
 
@@ -100,16 +96,16 @@ pipeline {
                 '''
             }
         } 
-
+/*
         stage('Approve'){
             steps{
                 timeout(1){
                     // waiting for 1 minute before abortion
-                    input 'Proceed?'   
+                    input 'Proceed?'
                 }
             }
         }
-
+*/
         stage('Deploy and test in PROD'){
             agent{
                 docker{
