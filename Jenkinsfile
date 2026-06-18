@@ -68,7 +68,6 @@ pipeline {
                         sh'''
                             npm install serve
                             npm audit fix --force
-                            node_modules/.bin/serve -s build
                             npx playwright test
                         '''
                     }
@@ -94,7 +93,7 @@ pipeline {
                         node_modules/.bin/netlify status
 
                         echo "Deploying to staging. Site: $NETLIFY_SITE_ID"
-                        node_modules/.bin/netlify deploy --dir=build
+                        node_modules/.bin/netlify deploy --dir=build --json
                     '''
                 }
             }
@@ -121,7 +120,7 @@ pipeline {
                 withCredentials([string(credentialsId: 'netlify-token', variable: 'NETLIFY_AUTH_TOKEN')]) {
                     sh'''
                         echo "Deploying to production. Site: $NETLIFY_SITE_ID"
-                        node_modules/.bin/netlify deploy --dir=build --prod
+                        node_modules/.bin/netlify deploy --dir=build --prod --json
                     '''
                 }
             }
