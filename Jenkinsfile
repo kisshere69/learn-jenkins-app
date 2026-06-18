@@ -95,7 +95,7 @@ pipeline {
             }
             steps{
                 sh'''
-                    echo "Production tests completed
+                echo "Production tests completed
                 '''
             }
         }  
