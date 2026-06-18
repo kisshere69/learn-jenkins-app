@@ -82,7 +82,7 @@ pipeline {
                 netlify deploy --dir=build --json > deploy-output.json
 
                 echo "Reading URL from deploy-output.json"                
-                node-jq -r '.deploy_url' deploy-output.json
+                jq -r '.deploy_url' deploy-output.json
 
                 echo "UAT tests completed"
 
