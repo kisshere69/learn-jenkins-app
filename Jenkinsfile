@@ -81,9 +81,6 @@ pipeline {
                 }
             }
 
-        environment{
-            CI_ENVIRONMENT_URL = "$env.UAT_URL"
-        }
             steps{
                 sh'''
                 npm install netlify-cli@20.1.1 node-jq
@@ -91,6 +88,8 @@ pipeline {
 
                 echo "Checking if we are logged in..."
                 node_modules/.bin/netlify status
+
+                npm audit fix --force
 
                 echo "Deploying to UAT and writing the output into JSON. Site: $NETLIFY_SITE_ID"
                 node_modules/.bin/netlify deploy --dir=build --json > deploy-output.json
