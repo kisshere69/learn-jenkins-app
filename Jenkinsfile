@@ -93,10 +93,6 @@ pipeline {
         environment{
             CI_ENVIRONMENT_URL = 'https://funny-sundae-fee54e.netlify.app'
         }
-            steps{
-                sh'''
-                '''
-            }
         }  
 
     }
