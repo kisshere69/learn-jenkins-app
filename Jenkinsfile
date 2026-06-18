@@ -49,13 +49,21 @@ pipeline {
                         '''
                     }
 
-                post{
-                    always{
-                        junit 'jest-results/junit.xml'
+                    post{
+                        always{
+                            junit 'jest-results/junit.xml'
+                        }
                     }
                 }
+
+                stage('End-to-End Test'){
+                    agent{
+                        docker{
+                            image 'mcr.microsoft.com/playwright:v1.39.0-jammy'
+                            reuseNode true
+                        }
+                    }
                 }
-           
             }
         }
 
@@ -117,6 +125,7 @@ pipeline {
                     reuseNode true
                 }
             }
+
         environment{
             CI_ENVIRONMENT_URL = 'https://funny-sundae-fee54e.netlify.app'
         }
