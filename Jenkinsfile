@@ -59,7 +59,7 @@ pipeline {
             }
         }
 
-        stage('Deploy'){
+        stage('Deploy staging'){
             agent{
                 docker{
                     image 'node:18-alpine'
@@ -73,14 +73,32 @@ pipeline {
                         npm install netlify-cli@20.1.1
                         node_modules/.bin/netlify --version
 
-                        echo "Deploying to PROD. Site: $NETLIFY_SITE_ID"
-
+                        echo "Checking if we are logged in..."
                         node_modules/.bin/netlify status
+
+                        echo "Deploying to staging. Site: $NETLIFY_SITE_ID"
+                        node_modules/.bin/netlify deploy --dir=build
+                    '''
+                }
+            }
+        }
+
+        stage('Deploy PROD'){
+            agent{
+                docker{
+                    image 'node:18-alpine'
+                    reuseNode true
+                }
+            }
+
+            steps{
+                withCredentials([string(credentialsId: 'netlify-token', variable: 'NETLIFY_AUTH_TOKEN')]) {
+                    sh'''
+                        echo "Deploying to production. Site: $NETLIFY_SITE_ID"
                         node_modules/.bin/netlify deploy --dir=build --prod
                     '''
                 }
             }
-
         }
 
         stage('PROD E2E'){
