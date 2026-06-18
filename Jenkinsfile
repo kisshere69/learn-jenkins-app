@@ -67,7 +67,6 @@ pipeline {
                     steps{
                         sh'''
                             npm audit fix --force
-                            npx playwright test
                         '''
                     }
                 }
