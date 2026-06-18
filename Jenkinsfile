@@ -93,6 +93,8 @@ pipeline {
                 node_modules/.bin/node-jq -r '.deploy_url' deploy-output.json
 
                 echo "UAT tests completed"
+
+                sleep 3
                 '''
             }
         } 
