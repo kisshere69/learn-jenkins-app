@@ -90,9 +90,9 @@ pipeline {
                     reuseNode true
                 }
             }
-        environment{
-            CI_ENVIRONMENT_URL = 'https://funny-sundae-fee54e.netlify.app'
-        }
+            environment{
+                CI_ENVIRONMENT_URL = 'https://funny-sundae-fee54e.netlify.app'
+            }
             steps{
                 sh'''
                     echo "Production tests completed
