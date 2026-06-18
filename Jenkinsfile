@@ -83,6 +83,15 @@ pipeline {
             }
         }
 
+        stage('Approve'){
+            steps{
+                timeout(1){
+                    // waiting for 1 minute before abortion
+                    input 'Proceed?'   
+                }
+            }
+        }
+
         stage('Deploy PROD'){
             agent{
                 docker{
