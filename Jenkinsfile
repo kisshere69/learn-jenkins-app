@@ -59,7 +59,7 @@ pipeline {
             }
         }
 
-        stage('Deploy staging'){
+        stage('Deploy UAT'){
             agent{
                 docker{
                     image 'node:18-alpine'
