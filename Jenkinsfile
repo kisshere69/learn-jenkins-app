@@ -67,6 +67,7 @@ pipeline {
                     steps{
                         sh'''
                             npm install serve
+                            npm audit fix --force
                             node_modules/.bin/serve -s build
                             npx playwright test
                         '''
