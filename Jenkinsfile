@@ -105,7 +105,7 @@ pipeline {
         }
 
 
-        stage('UAT E2E'){
+        stage('UAT E2E Test'){
             agent{
                 docker{
                     image 'mcr.microsoft.com/playwright:v1.61.0-jammy'
@@ -132,25 +132,7 @@ pipeline {
             }
         }
 
-        stage('Deploy PROD'){
-            agent{
-                docker{
-                    image 'node:18-alpine'
-                    reuseNode true
-                }
-            }
-
-            steps{
-                withCredentials([string(credentialsId: 'netlify-token', variable: 'NETLIFY_AUTH_TOKEN')]) {
-                    sh'''
-                        echo "Deploying to production. Site: $NETLIFY_SITE_ID"
-                        node_modules/.bin/netlify deploy --dir=build --prod --json
-                    '''
-                }
-            }
-        }
-
-        stage('PROD E2E'){
+        stage('Deploy and test in PROD'){
             agent{
                 docker{
                     image 'mcr.microsoft.com/playwright:v1.61.0-jammy'
@@ -163,6 +145,10 @@ pipeline {
         }
             steps{
                 sh'''
+                echo "Deploying to production. Site: $NETLIFY_SITE_ID"
+                node_modules/.bin/netlify deploy --dir=build --prod --json
+
+                npx playwright test
                 echo "Production tests completed"
                 '''
             }
