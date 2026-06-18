@@ -8,15 +8,6 @@ pipeline {
     }
 
     stages {
-
-        stage ('Docker'){
-            steps{
-                sh '''
-                echo "Building Docker image..."
-                docker build -t my-playwright .
-                '''
-            }
-        }
         stage('Build') {
             agent{
                 docker{
@@ -27,7 +18,6 @@ pipeline {
             
             steps {
                 sh '''
-                    echo "Listing files..." 
                     node --version
                     npm --version
                     npm ci
