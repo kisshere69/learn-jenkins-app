@@ -126,5 +126,4 @@ pipeline {
             archiveArtifacts artifacts: 'build/**'
         }
     }
-
 }
