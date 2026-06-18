@@ -89,10 +89,10 @@ pipeline {
                 echo "Checking if we are logged in..."
                 node_modules/.bin/netlify status
 
-                npm audit fix --force
-
                 echo "Deploying to UAT and writing the output into JSON. Site: $NETLIFY_SITE_ID"
                 node_modules/.bin/netlify deploy --dir=build --json > deploy-output.json
+
+                npm audit fix --force
 
                 echo "Reading URL from deploy-output.json"                
                 node_modules/.bin/node-jq -r '.deploy_url' deploy-output.json
