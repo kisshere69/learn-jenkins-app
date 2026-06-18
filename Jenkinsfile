@@ -73,39 +73,7 @@ pipeline {
             }
         }
 
-        stage('Deploy UAT'){
-            agent{
-                docker{
-                    image 'node:18-alpine'
-                    reuseNode true
-                }
-            }
-
-            steps{
-                withCredentials([string(credentialsId: 'netlify-token', variable: 'NETLIFY_AUTH_TOKEN')]) {
-                    sh'''
-                        npm install netlify-cli@20.1.1 node-jq
-                        node_modules/.bin/netlify --version
-
-                        echo "Checking if we are logged in..."
-                        node_modules/.bin/netlify status
-
-                        echo "Deploying to UAT and writing the output into JSON. Site: $NETLIFY_SITE_ID"
-                        node_modules/.bin/netlify deploy --dir=build --json > deploy-output.json
-                        
-                        echo "Reading URL from deploy-output.json"
-                        node_modules/.bin/node-jq -r '.deploy_url' deploy-output.json
-                    '''
-                }
-            
-                script{
-                    env.UAT_URL = sh(script: "node_modules/.bin/node-jq -r '.deploy_url' deploy-output.json", returnStdout: true)
-                }
-            }
-        }
-
-
-        stage('UAT E2E Test'){
+        stage('Deploy and test in UAT'){
             agent{
                 docker{
                     image 'mcr.microsoft.com/playwright:v1.61.0-jammy'
@@ -118,7 +86,19 @@ pipeline {
         }
             steps{
                 sh'''
-                echo "Production tests completed"
+                npm install netlify-cli@20.1.1 node-jq
+                node_modules/.bin/netlify --version
+
+                echo "Checking if we are logged in..."
+                node_modules/.bin/netlify status
+
+                echo "Deploying to UAT and writing the output into JSON. Site: $NETLIFY_SITE_ID"
+                node_modules/.bin/netlify deploy --dir=build --json > deploy-output.json
+
+                echo "Reading URL from deploy-output.json"                
+                node_modules/.bin/node-jq -r '.deploy_url' deploy-output.json
+
+                echo "UAT tests completed"
                 '''
             }
         } 
@@ -149,7 +129,7 @@ pipeline {
                 node_modules/.bin/netlify deploy --dir=build --prod --json
 
                 npx playwright test
-                echo "Production tests completed"
+                echo "PROD tests completed"
                 '''
             }
         }  
